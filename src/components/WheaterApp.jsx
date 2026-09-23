@@ -14,7 +14,7 @@ const WheatherApp = () => {
   const [error, setError] = useState('')
 
   const [weatherData, setWeatherData] = useState({
-    city: 'London',
+    city: 'Digite a cidade',
     country: '',
     temperature: 28,
     humidity: 35,

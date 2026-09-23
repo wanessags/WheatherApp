@@ -12,7 +12,8 @@ const WheatherApp = () => {
     temperature: 28,
     humidity: 35,
     wind: 3,
-    weatherCode: 0
+    weatherCode: 0,
+    date: new Date()
   })
 
   // CAMPOS QUE VAMOS BUSCAR NA OPEN-METEO
@@ -87,6 +88,17 @@ const WheatherApp = () => {
     }
   }
 
+  // FORMATAR A DATA
+  const formatDate = (date) => {
+    const newDate = new Date(date)
+
+    return newDate.toLocaleDateString('pt-BR', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short'
+    })
+  }
+
   // PESQUISAR CLIMA
   const search = async (cityName) => {
     try {
@@ -121,7 +133,8 @@ const WheatherApp = () => {
         temperature: data.current.temperature_2m,
         humidity: data.current.relative_humidity_2m,
         wind: data.current.wind_speed_10m,
-        weatherCode: data.current.weather_code
+        weatherCode: data.current.weather_code,
+        date: data.current.time
       })
 
     } catch (error) {
@@ -189,9 +202,13 @@ const WheatherApp = () => {
 
         </div>
 
-        {/* DATA - AINDA FIXA NESTA ETAPA */}
+        {/* DATA */}
         <div className="weather-date">
-          <p>Sat, 15 Ago</p>
+
+          <p>
+            {formatDate(weatherData.date)}
+          </p>
+
         </div>
 
         {/* DADOS DO CLIMA */}

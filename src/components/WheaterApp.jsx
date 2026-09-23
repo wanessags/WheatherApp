@@ -2,6 +2,7 @@ import sunny from '../assets/images/sunny.png'
 import cloudy from '../assets/images/cloudy.png'
 import rainy from '../assets/images/rainy.png'
 import snowy from '../assets/images/snowy.png'
+import loading from '../assets/images/loading.gif'
 
 import { useState } from 'react'
 
@@ -9,6 +10,8 @@ const WheatherApp = () => {
   // GERENCIAMENTO E CONTROLE DE DADOS E AÇÕES
 
   const [location, setLocation] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const [weatherData, setWeatherData] = useState({
     city: 'London',
@@ -105,7 +108,6 @@ const WheatherApp = () => {
 
   // ESCOLHER IMAGEM DE ACORDO COM O CLIMA
   const getWeatherImage = (weatherCode) => {
-
     // ENSOLARADO
     if (
       weatherCode === 0 ||
@@ -159,10 +161,17 @@ const WheatherApp = () => {
 
   // PESQUISAR CLIMA
   const search = async (cityName) => {
+    if (!cityName.trim()) {
+      setError('Digite o nome de uma cidade.')
+      return
+    }
+
     try {
-      if (!cityName.trim()) {
-        return
-      }
+      // INICIAR CARREGAMENTO
+      setIsLoading(true)
+
+      // LIMPAR ERRO ANTERIOR
+      setError('')
 
       // BUSCAR COORDENADAS
       const coordinates = await getCoordinates(cityName)
@@ -176,7 +185,7 @@ const WheatherApp = () => {
       const response = await fetch(url)
 
       if (!response.ok) {
-        throw new Error('Failed to fetch weather data')
+        throw new Error('Erro ao buscar dados do clima!')
       }
 
       // TRANSFORMAR RESPOSTA EM JSON
@@ -197,7 +206,12 @@ const WheatherApp = () => {
 
     } catch (error) {
       console.error(error)
-      alert(error.message)
+
+      setError(error.message)
+
+    } finally {
+      // FINALIZAR CARREGAMENTO
+      setIsLoading(false)
     }
   }
 
@@ -215,12 +229,10 @@ const WheatherApp = () => {
             <i className="fa-solid fa-location-dot"></i>
 
             <div className="location">
-
               {weatherData.city}
 
               {weatherData.country &&
                 `, ${weatherData.country}`}
-
             </div>
 
           </div>
@@ -242,18 +254,37 @@ const WheatherApp = () => {
 
           </div>
 
+          {/* MENSAGEM DE ERRO */}
+          {error && (
+            <p className="error">
+              {error}
+            </p>
+          )}
+
         </div>
 
         {/* CLIMA */}
         <div className="weather">
 
           <img
-            src={getWeatherImage(weatherData.weatherCode)}
-            alt={weatherCodes[weatherData.weatherCode]}
+            src={
+              isLoading
+                ? loading
+                : getWeatherImage(weatherData.weatherCode)
+            }
+            alt={
+              isLoading
+                ? 'Loading'
+                : weatherCodes[weatherData.weatherCode]
+            }
           />
 
           <div className="weather-type">
-            {weatherCodes[weatherData.weatherCode]}
+
+            {isLoading
+              ? 'Loading...'
+              : weatherCodes[weatherData.weatherCode]}
+
           </div>
 
           <div className="temp">

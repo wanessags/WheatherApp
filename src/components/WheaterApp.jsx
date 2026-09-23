@@ -1,4 +1,8 @@
 import sunny from '../assets/images/sunny.png'
+import cloudy from '../assets/images/cloudy.png'
+import rainy from '../assets/images/rainy.png'
+import snowy from '../assets/images/snowy.png'
+
 import { useState } from 'react'
 
 const WheatherApp = () => {
@@ -99,6 +103,60 @@ const WheatherApp = () => {
     })
   }
 
+  // ESCOLHER IMAGEM DE ACORDO COM O CLIMA
+  const getWeatherImage = (weatherCode) => {
+
+    // ENSOLARADO
+    if (
+      weatherCode === 0 ||
+      weatherCode === 1
+    ) {
+      return sunny
+    }
+
+    // NUBLADO / NEBLINA
+    if (
+      weatherCode === 2 ||
+      weatherCode === 3 ||
+      weatherCode === 45 ||
+      weatherCode === 48
+    ) {
+      return cloudy
+    }
+
+    // CHUVA / GAROA / TEMPESTADE
+    if (
+      weatherCode === 51 ||
+      weatherCode === 53 ||
+      weatherCode === 55 ||
+      weatherCode === 61 ||
+      weatherCode === 63 ||
+      weatherCode === 65 ||
+      weatherCode === 80 ||
+      weatherCode === 81 ||
+      weatherCode === 82 ||
+      weatherCode === 95 ||
+      weatherCode === 96 ||
+      weatherCode === 99
+    ) {
+      return rainy
+    }
+
+    // NEVE
+    if (
+      weatherCode === 71 ||
+      weatherCode === 73 ||
+      weatherCode === 75 ||
+      weatherCode === 77 ||
+      weatherCode === 85 ||
+      weatherCode === 86
+    ) {
+      return snowy
+    }
+
+    return sunny
+  }
+
   // PESQUISAR CLIMA
   const search = async (cityName) => {
     try {
@@ -157,10 +215,12 @@ const WheatherApp = () => {
             <i className="fa-solid fa-location-dot"></i>
 
             <div className="location">
+
               {weatherData.city}
 
               {weatherData.country &&
                 `, ${weatherData.country}`}
+
             </div>
 
           </div>
@@ -188,7 +248,7 @@ const WheatherApp = () => {
         <div className="weather">
 
           <img
-            src={sunny}
+            src={getWeatherImage(weatherData.weatherCode)}
             alt={weatherCodes[weatherData.weatherCode]}
           />
 
